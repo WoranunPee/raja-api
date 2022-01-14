@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "../node_modules/.prisma/client"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  name     String? @unique
+  lastname String?
+}
+
+model Employee {
+  id                Int                 @id @default(autoincrement())
+  email             String?             @unique
+  name              String?
+  phone             String?
+  address           String?
+  salary            Float?
+  lastname          String?
+  status            String              @default("active")
+  employee_jobtitle Employee_JobTitle[]
+}
+
+model JobTitle {
+  id                Int                 @id @default(autoincrement())
+  title             String
+  employee_jobtitle Employee_JobTitle[]
+}
+
+model Employee_JobTitle {
+  id         Int       @id @default(autoincrement())
+  employeeId Int?
+  jobTitleId Int?
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  jobTitle   JobTitle? @relation(fields: [jobTitleId], references: [id])
+}
+
+model Residents {
+  id         Int                    @id @default(autoincrement())
+  name       String
+  lastname   String
+  phone      String
+  plotofLand Residents_PlotofLand[]
+}
+
+model PlotofLand {
+  id         Int                    @id @default(autoincrement())
+  commonFee  Float
+  landNumber String
+  size       String?
+  type       String?
+  hostNumber String
+  plotofLand Residents_PlotofLand[]
+}
+
+model Residents_PlotofLand {
+  id           Int         @id @default(autoincrement())
+  residentsId  Int?
+  plotofLandId Int?
+  PlotofLand   PlotofLand? @relation(fields: [plotofLandId], references: [id])
+  Residents    Residents?  @relation(fields: [residentsId], references: [id])
+}
